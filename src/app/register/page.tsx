@@ -12,12 +12,13 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import GoogleIcon from '@mui/icons-material/Google';
 import Link from "@mui/material/Link";
+import Image from "next/image";
 
 const Container = styled(Box)(({ theme }) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '100vh',
+    minHeight: '65vh',
 }));
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -58,7 +59,19 @@ const LoginForm = () => {
     };
 
     return (
-        <Container>
+        <div>
+            <Box display="flex" justifyContent="center" marginTop={5}>
+                <Image
+                    src="/moneylover-logo.png" // Replace with the actual image source
+                    alt="MoneyLoverLogo"
+                    width={110}
+                    height={150}
+                />
+            </Box>
+            <Typography variant="h4" align="center" marginTop={5} gutterBottom>
+                MoneyLover
+            </Typography>
+            <Container>
             <StyledCard>
                 <Typography variant="h4" align="center" gutterBottom>
                     Register
@@ -126,9 +139,6 @@ const LoginForm = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 margin="normal"
                             />
-                            <Link component="button" variant="body2" onClick={() => console.log("Forgot Password clicked")}>
-                                Forgot Password
-                            </Link>
                             <StyledButton type="submit" variant="contained" fullWidth style={{ backgroundColor: "#00bc2a" }}>
                                 Sign Up
                             </StyledButton>
@@ -140,6 +150,7 @@ const LoginForm = () => {
                 </FormContainer>
             </StyledCard>
         </Container>
+        </div>
     );
 };
 
