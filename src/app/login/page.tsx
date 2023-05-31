@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import GoogleIcon from '@mui/icons-material/Google';
-import Link from "@mui/material/Link";
+import Link from "next/link";
 import Image from "next/image";
 
 const Container = styled(Box)(({ theme }) => ({
@@ -64,12 +64,12 @@ const LoginForm = () => {
                 <Image
                     src="/moneylover-logo.png" // Replace with the actual image source
                     alt="MoneyLoverLogo"
-                    width={110}
-                    height={150}
+                    width={80}
+                    height={80}
                 />
             </Box>
             <Typography variant="h4" align="center" marginTop={5} gutterBottom>
-                MoneyLover
+                Money Lover
             </Typography>
             <Container>
             <StyledCard>
@@ -139,16 +139,17 @@ const LoginForm = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 margin="normal"
                             />
-                            <Link component="button" variant="body2" onClick={() => console.log("Forgot Password clicked")}>
+                            <Link component="button" href="/" variant="body2">
                                 Forgot Password
                             </Link>
-                            <StyledButton type="submit" variant="contained" fullWidth style={{ backgroundColor: "#00bc2a" }}>
+                            <StyledButton type="submit" variant="contained" fullWidth style={{ backgroundColor: "#00bc2a" ,marginTop:15,marginBottom:15}}>
                                 Login
                             </StyledButton>
-                            <Typography variant="body2" align="center">
-                                Don’t have an account? <Link component="button" variant="body2" onClick={() => console.log("Register clicked")}>Register</Link>
-                            </Typography>
                         </form>
+                        <Typography variant="body2" align="center">
+                        Don’t have an account?
+                            <Link href="/register" variant="body2" style={{color:"blue"}}> Register</Link>
+                    </Typography>
                     </Grid>
                 </FormContainer>
             </StyledCard>

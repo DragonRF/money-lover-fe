@@ -1,8 +1,6 @@
 "use client"
-import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { Card } from '@mui/material';
 import Typography from '@mui/material/Typography';
@@ -11,8 +9,18 @@ import Button from '@mui/material/Button';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import GoogleIcon from '@mui/icons-material/Google';
-import Link from "@mui/material/Link";
+import Link from "next/link";
 import Image from "next/image";
+import {useFormik} from "formik";
+import * as Yup from 'yup';
+
+const SignupSchema = Yup.object().shape({
+    email: Yup.string().email('Invalid email').required('Required'),
+    password: Yup.string()
+        .min(8, 'Password needs to be minimum 8 - 16 characters!')
+        .max(16, 'Password needs to be minimum 8 - 16 characters!')
+        .required('Required'),
+});
 
 const Container = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -44,19 +52,23 @@ const SocialLoginContainer = styled(Grid)(({ theme }) => ({
 }));
 
 const LoginForm = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleLogin = (e) => {
-        e.preventDefault();
-        // Perform login logic here
-        console.log('Logging in...');
-    };
 
     const handleSocialLogin = (platform) => {
         // Handle the login logic for the specified social media platform
         console.log(`Logging in with ${platform}`);
     };
+
+    const formik = useFormik({
+        initialValues:{
+            email: '',
+            password: ''
+        },
+        validationSchema: SignupSchema,
+        onSubmit: values => {
+            console.log(values)
+        }
+    })
+
 
     return (
         <div>
@@ -64,12 +76,12 @@ const LoginForm = () => {
                 <Image
                     src="/moneylover-logo.png" // Replace with the actual image source
                     alt="MoneyLoverLogo"
-                    width={110}
-                    height={150}
+                    width={80}
+                    height={80}
                 />
             </Box>
             <Typography variant="h4" align="center" marginTop={5} gutterBottom>
-                MoneyLover
+                Money Lover
             </Typography>
             <Container>
             <StyledCard>
@@ -115,37 +127,45 @@ const LoginForm = () => {
                         </SocialLoginContainer>
                     </Grid>
                     <Grid item xs={6}>
-                        <form onSubmit={handleLogin}>
+                        <form onSubmit={formik.handleSubmit}>
                             <Typography variant="h6" align="center" gutterBottom>
                                 Using Money Lover account
                             </Typography>
                             <TextField
+                                name="email"
                                 type="email"
                                 label="Email"
                                 variant="outlined"
                                 fullWidth
                                 required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
                                 margin="normal"
+                                onChange={formik.handleChange}
+                                value={formik.values.email}
                             />
+                            {formik.errors.email && formik.touched.email ? <Typography color="error">{formik.errors.email}</Typography> : null}
                             <TextField
+                                name="password"
                                 type="password"
                                 label="Password"
                                 variant="outlined"
                                 fullWidth
                                 required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
                                 margin="normal"
+                                onChange={formik.handleChange}
+                                value={formik.values.password}
                             />
-                            <StyledButton type="submit" variant="contained" fullWidth style={{ backgroundColor: "#00bc2a" }}>
+                            {formik.errors.password && formik.touched.password ? <Typography color="error">{formik.errors.password}</Typography> : null}
+
+                            <StyledButton type="submit" variant="contained" fullWidth style={{ backgroundColor: "#00bc2a" ,marginTop:15,marginBottom:15}}>
                                 Sign Up
                             </StyledButton>
-                            <Typography variant="body2" align="center">
-                                Already have an account? <Link component="button" variant="body2" onClick={() => console.log("Login clicked")}>Login</Link>
-                            </Typography>
+
                         </form>
+                        <Typography variant="body2" align="center">
+                        Already have an account?
+                            <Link component="button" href="/login" variant="body2" style={{color:"blue"}}> Login
+                            </Link>
+                    </Typography>
                     </Grid>
                 </FormContainer>
             </StyledCard>
