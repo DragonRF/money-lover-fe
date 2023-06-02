@@ -1,12 +1,13 @@
 // dashboard.tsx
 "use client"
-const Dashboard = () => {
+import Dashboard from "@/app/dashboard/components/Dashboard";
+
+const DashboardAdmin = () => {
     return (
         <div>
-            <h1>Welcome to the Dashboard!</h1>
-            {/* Add your dashboard content here */}
+            <Dashboard/>
         </div>
     );
 };
 
-export default Dashboard;
+export default DashboardAdmin;

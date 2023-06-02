@@ -1,3 +1,4 @@
+"use client"
 import * as React from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,10 +18,11 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
+import {MainItem} from "@/app/dashboard/components/MainItem";
+import {SecondaryItem} from "@/app/dashboard/components/SecondaryItem";
 
 function Copyright(props: any) {
     return (
@@ -146,9 +148,9 @@ function DashboardContent() {
                     </Toolbar>
                     <Divider />
                     <List component="nav">
-                        {mainListItems}
+                        <MainItem/>
                         <Divider sx={{ my: 1 }} />
-                        {secondaryListItems}
+                        <SecondaryItem/>
                     </List>
                 </Drawer>
                 <Box
