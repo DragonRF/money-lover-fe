@@ -1,8 +1,9 @@
+//register.tsx
 "use client"
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { Card } from '@mui/material';
+import {Alert, Card, Snackbar} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -13,6 +14,9 @@ import Link from "next/link";
 import Image from "next/image";
 import {useFormik} from "formik";
 import * as Yup from 'yup';
+import {AuthService} from "@/app/service/auth.service";
+import {SyntheticEvent, useState} from "react";
+import {log} from "util";
 
 const SignupSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Required'),
@@ -51,11 +55,20 @@ const SocialLoginContainer = styled(Grid)(({ theme }) => ({
     justifyContent: 'center',
 }));
 
-const LoginForm = () => {
+const RegisterForm = () => {
+    const [open, setOpen] = useState(false);
 
     const handleSocialLogin = (platform) => {
         // Handle the login logic for the specified social media platform
         console.log(`Logging in with ${platform}`);
+    };
+
+    const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
     };
 
     const formik = useFormik({
@@ -65,9 +78,14 @@ const LoginForm = () => {
         },
         validationSchema: SignupSchema,
         onSubmit: values => {
-            console.log(values)
+            AuthService.register(values).then(res =>{
+                setOpen(true)
+            }).catch(err => {
+                console.log(err.message)
+            })
         }
     })
+
 
 
     return (
@@ -159,19 +177,22 @@ const LoginForm = () => {
                             <StyledButton type="submit" variant="contained" fullWidth style={{ backgroundColor: "#00bc2a" ,marginTop:15,marginBottom:15}}>
                                 Sign Up
                             </StyledButton>
-
                         </form>
                         <Typography variant="body2" align="center">
                         Already have an account?
-                            <Link component="button" href="/login" variant="body2" style={{color:"blue"}}> Login
-                            </Link>
+                            <Link component="button" href="/login" variant="body2" style={{color:"blue"}}> Login</Link>
                     </Typography>
                     </Grid>
                 </FormContainer>
             </StyledCard>
         </Container>
+            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Register Success!
+                </Alert>
+            </Snackbar>
         </div>
     );
 };
 
-export default LoginForm;
+export default RegisterForm;
