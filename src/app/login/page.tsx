@@ -15,6 +15,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {useFormik} from "formik";
 import * as Yup from 'yup';
+import Cookies from 'js-cookie'
 import {AuthService} from "@/app/service/auth.service";
 import {SyntheticEvent, useState} from "react";
 
@@ -64,7 +65,9 @@ const LoginForm = () => {
             const response = await AuthService.login(values);
             if (response.data.status == 'success') {
                 let token = response.data.data.access_token;
-                localStorage.setItem('token',token)
+                localStorage.setItem('token', token);
+                // dung cookie de luu token
+                Cookies.set('token', token)
                 setOpen(true);
                 await router.push('/dashboard');
             } else {
