@@ -19,8 +19,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
 import {MainItem} from "@/app/dashboard/components/MainItem";
 import {SecondaryItem} from "@/app/dashboard/components/SecondaryItem";
 
@@ -181,25 +179,7 @@ function DashboardContent() {
                                     <Chart />
                                 </Paper>
                             </Grid>
-                            {/* Recent Deposits */}
-                            <Grid item xs={12} md={4} lg={3}>
-                                <Paper
-                                    sx={{
-                                        p: 2,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        height: 240,
-                                    }}
-                                >
-                                    <Deposits />
-                                </Paper>
-                            </Grid>
-                            {/* Recent Orders */}
-                            <Grid item xs={12}>
-                                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <Orders />
-                                </Paper>
-                            </Grid>
+
                         </Grid>
                         <Copyright sx={{ pt: 4 }} />
                     </Container>

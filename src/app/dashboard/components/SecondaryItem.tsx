@@ -5,11 +5,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ListItemText from "@mui/material/ListItemText";
 import * as React from "react";
 import {useRouter} from "next/navigation";
+import Cookies from "js-cookie";
 
 export const SecondaryItem = () =>{
     const router = useRouter()
     const logout = async () => {
-        localStorage.removeItem('token')
+        localStorage.removeItem('token');
+        Cookies.remove('token')
         await router.push('/login')
     }
 
