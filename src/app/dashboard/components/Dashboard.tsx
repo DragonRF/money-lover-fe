@@ -1,10 +1,10 @@
 "use client"
 import * as React from 'react';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+import {styled, createTheme, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -17,10 +17,17 @@ import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import SearchIcon from '@mui/icons-material/Search';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import Chart from './Chart';
 import {MainItem} from "@/app/dashboard/components/MainItem";
 import {SecondaryItem} from "@/app/dashboard/components/SecondaryItem";
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import {Button, CardActionArea, CardActions, ToggleButton, ToggleButtonGroup} from '@mui/material';
+import TabScrollTransaction from "@/app/dashboard/components/Tabs/TabScrollTransaction";
 
 function Copyright(props: any) {
     return (
@@ -43,7 +50,7 @@ interface AppBarProps extends MuiAppBarProps {
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
+})<AppBarProps>(({theme, open}) => ({
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
@@ -59,8 +66,8 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
+const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})(
+    ({theme, open}) => ({
         '& .MuiDrawer-paper': {
             position: 'relative',
             whiteSpace: 'nowrap',
@@ -93,10 +100,21 @@ function DashboardContent() {
         setOpen(!open);
     };
 
+    const [alignment, setAlignment] = React.useState('thismonth');
+
+    const handleChange = (
+        event: React.MouseEvent<HTMLElement>,
+        newAlignment: string,
+    ) => {
+        setAlignment(newAlignment);
+    };
+
     return (
+
+
         <ThemeProvider theme={mdTheme}>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
+            <Box sx={{display: 'flex'}}>
+                <CssBaseline/>
                 <AppBar position="absolute" open={open}>
                     <Toolbar
                         sx={{
@@ -110,25 +128,36 @@ function DashboardContent() {
                             onClick={toggleDrawer}
                             sx={{
                                 marginRight: '36px',
-                                ...(open && { display: 'none' }),
+                                ...(open && {display: 'none'}),
                             }}
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
                         <Typography
                             component="h1"
                             variant="h6"
                             color="inherit"
                             noWrap
-                            sx={{ flexGrow: 1 }}
+                            sx={{flexGrow: 1}}
                         >
                             Dashboard
                         </Typography>
-                        <IconButton color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
+                        <div>
+                            <IconButton color="inherit">
+                                <CalendarMonthIcon/>
+                            </IconButton>
+                            <IconButton color="inherit">
+                                <Badge badgeContent={4} color="secondary">
+                                    <VisibilityIcon/>
+                                </Badge>
+                            </IconButton>
+                            <IconButton color="inherit">
+                                <SearchIcon/>
+                            </IconButton>
+                            <Button variant="contained" color="success" style={{backgroundColor: "green"}}>
+                                Add Transaction
+                            </Button>
+                        </div>
                     </Toolbar>
                 </AppBar>
                 <Drawer variant="permanent" open={open}>
@@ -141,13 +170,13 @@ function DashboardContent() {
                         }}
                     >
                         <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon />
+                            <ChevronLeftIcon/>
                         </IconButton>
                     </Toolbar>
-                    <Divider />
+                    <Divider/>
                     <List component="nav">
                         <MainItem/>
-                        <Divider sx={{ my: 1 }} />
+                        <Divider sx={{my: 1}}/>
                         <SecondaryItem/>
                     </List>
                 </Drawer>
@@ -163,25 +192,30 @@ function DashboardContent() {
                         overflow: 'auto',
                     }}
                 >
-                    <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                        <Grid container spacing={3}>
+                    <Toolbar/>
+                    <Container maxWidth="lg" sx={{
+                        mt: 4,
+                        mb: 4,
+                        justifyContent: 'center',
+                    }}>
+                        <Grid container spacing={3} justifyContent="center">
                             {/* Chart */}
-                            <Grid item xs={12} md={8} lg={9}>
+                            <Grid item xs={12} md={6} lg={6}>
                                 <Paper
                                     sx={{
                                         p: 2,
-                                        display: 'flex',
                                         flexDirection: 'column',
-                                        height: 240,
+                                        height: 500,
+                                        justifyContent: "center"
                                     }}
                                 >
-                                    <Chart />
+                                    <Card>
+                                        <TabScrollTransaction/>
+                                    </Card>
                                 </Paper>
                             </Grid>
-
                         </Grid>
-                        <Copyright sx={{ pt: 4 }} />
+                        <Copyright sx={{pt: 4}}/>
                     </Container>
                 </Box>
             </Box>
@@ -190,5 +224,5 @@ function DashboardContent() {
 }
 
 export default function Dashboard() {
-    return <DashboardContent />;
+    return <DashboardContent/>;
 }
