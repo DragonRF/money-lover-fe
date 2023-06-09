@@ -3,10 +3,13 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ListItemText from "@mui/material/ListItemText";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import LayersIcon from "@mui/icons-material/Layers";
+import HelpIcon from '@mui/icons-material/Help';
+import PixIcon from '@mui/icons-material/Pix';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import * as React from "react";
+import WalletIcon from '@mui/icons-material/Wallet';
+import Link from "next/link";
 
 export const MainItem = () => {
     return (
@@ -15,19 +18,19 @@ export const MainItem = () => {
                 <ListItemIcon>
                     <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
+                <ListItemText primary="Transaction" />
             </ListItemButton>
             <ListItemButton>
                 <ListItemIcon>
                     <ShoppingCartIcon />
                 </ListItemIcon>
-                <ListItemText primary="Orders" />
+                <ListItemText primary="Store" />
             </ListItemButton>
             <ListItemButton>
                 <ListItemIcon>
-                    <PeopleIcon />
+                    <PixIcon />
                 </ListItemIcon>
-                <ListItemText primary="Customers" />
+                <ListItemText primary="Budget" />
             </ListItemButton>
             <ListItemButton>
                 <ListItemIcon>
@@ -37,9 +40,23 @@ export const MainItem = () => {
             </ListItemButton>
             <ListItemButton>
                 <ListItemIcon>
-                    <LayersIcon />
+                    <AccountBoxIcon />
                 </ListItemIcon>
-                <ListItemText primary="Integrations" />
+                <ListItemText primary="Account" />
+            </ListItemButton>
+            <Link href='/wallets'>
+            <ListItemButton>
+                <ListItemIcon>
+                    <WalletIcon />
+                </ListItemIcon>
+                <ListItemText primary="Wallet" />
+            </ListItemButton>
+            </Link>
+            <ListItemButton>
+                <ListItemIcon>
+                    <HelpIcon />
+                </ListItemIcon>
+                <ListItemText primary="Help" />
             </ListItemButton>
         </React.Fragment>
     )

@@ -17,6 +17,8 @@ import * as Yup from 'yup';
 import {AuthService} from "@/app/service/auth.service";
 import {SyntheticEvent, useState} from "react";
 import {log} from "util";
+import GoogleButton from "@/app/dashboard/components/GoogleButton/GoogleButton";
+import {GoogleOAuthProvider} from "@react-oauth/google";
 
 const SignupSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Required'),
@@ -57,6 +59,8 @@ const SocialLoginContainer = styled(Grid)(({ theme }) => ({
 
 const RegisterForm = () => {
     const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState('')
+    const [nameAlert, setNameAlert] = useState('success')
 
     const handleSocialLogin = (platform) => {
         // Handle the login logic for the specified social media platform
@@ -79,7 +83,16 @@ const RegisterForm = () => {
         validationSchema: SignupSchema,
         onSubmit: values => {
             AuthService.register(values).then(res =>{
-                setOpen(true)
+                console.log(res)
+               if (res.data.status === 'success'){
+                   setOpen(true)
+                   setMessage("Register Success")
+               } else {
+                   setOpen(true)
+                   setNameAlert('error')
+                   setMessage(res.data.message)
+               }
+
             }).catch(err => {
                 console.log(err.message)
             })
@@ -90,6 +103,7 @@ const RegisterForm = () => {
 
     return (
         <div>
+            <GoogleOAuthProvider clientId="807284928174-e331ovfkca2d1a6kdfbedkt0vg5jfl3g.apps.googleusercontent.com">
             <Box display="flex" justifyContent="center" marginTop={5}>
                 <Image
                     src="/moneylover-logo.png" // Replace with the actual image source
@@ -132,16 +146,7 @@ const RegisterForm = () => {
                             >
                                 Twitter
                             </Button>
-                            <Button
-                                style={{ marginTop: 10, backgroundColor: "#e32918" }}
-                                variant="contained"
-                                color="primary"
-                                startIcon={<GoogleIcon />}
-                                fullWidth
-                                onClick={() => handleSocialLogin('Google')}
-                            >
-                                Google
-                            </Button>
+                            <GoogleButton/>
                         </SocialLoginContainer>
                     </Grid>
                     <Grid item xs={6}>
@@ -187,10 +192,11 @@ const RegisterForm = () => {
             </StyledCard>
         </Container>
             <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    Register Success!
+                <Alert onClose={handleClose} severity={nameAlert} sx={{ width: '100%' }}>
+                    {message}
                 </Alert>
             </Snackbar>
+            </GoogleOAuthProvider>
         </div>
     );
 };
