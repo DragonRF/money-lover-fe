@@ -8,7 +8,13 @@ export class AuthService {
     }
     static async login(data){
         return await axios.post(
-            "http://localhost:3000/login",
+            "http://localhost:3000/auth/login",
+            data
+        )
+    }
+    static async loginGoogle(data){
+        return await axios.post(
+            "http://localhost:3000/auth/google/login",
             data
         )
     }
