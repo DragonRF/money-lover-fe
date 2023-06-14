@@ -1,7 +1,16 @@
 'use client'
 import Typography from "@mui/material/Typography";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {AppBar, Button, CardHeader, Collapse} from "@mui/material";
+import {
+    AppBar,
+    Button,
+    CardHeader, Checkbox,
+    Collapse,
+    Dialog, DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle, FormControl, FormControlLabel, InputLabel, NativeSelect, TextField
+} from "@mui/material";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,11 +25,55 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import SendIcon from '@mui/icons-material/Send';
+import {useState} from "react";
+import {useFormik} from "formik";
+import * as Yup from 'yup';
+import {WalletService} from "@/app/service/wallet.service";
+
+
+const WalletSchema = Yup.object().shape({
+    name: Yup.string().required("Required"),
+    currency: Yup
+        .mixed()
+        .oneOf(['usd', 'vnd', 'eur'] as const)
+        .defined(),
+    initialBalance: Yup.number().default(0)
+})
 
 
 const PageWallet = () => {
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            currency: 'usd',
+            initialBalance: 0
+        },
+        validationSchema: WalletSchema,
+        onSubmit: values => {
+            WalletService.createWallet(values).then(res => {
+                console.log(res)
+                if (res.data.status === 'success'){
+                    handleClose()
+                }
+            })
+            console.log(values)
+        }
+
+    });
+
     return (
-        <Box sx={{flexGrow: 1, backgroundColor: '#d2d0d0', minHeight: 800}} >
+        <Box sx={{flexGrow: 1, backgroundColor: '#d2d0d0', minHeight: 800}}>
+
             <AppBar position="static">
                 <Toolbar>
                     <IconButton
@@ -35,9 +88,76 @@ const PageWallet = () => {
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         My Wallet
                     </Typography>
-                    <Button variant="contained" color="success">
-                        Add Wallet
-                    </Button>
+                    <div>
+                        <Button variant="contained" color="success" onClick={handleClickOpen}>
+                            Add Wallet +
+                        </Button>
+                        <Dialog open={open} onClose={handleClose}>
+                            <DialogTitle>Add new wallet!</DialogTitle>
+                            <DialogContent style={{width: 550, padding: 10}}>
+                                <Box sx={{justifyContent: 'space-evenly', width: 400, margin: 5}}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                name="name"
+                                                type='text'
+                                                label="Wallet name"
+                                                variant="filled"
+                                                color="primary"
+                                                placeholder="Your wallet name?"
+                                                focused
+                                                fullWidth
+                                                value={formik.values.name}
+                                                onChange={formik.handleChange}
+                                            />
+                                        </Grid>
+
+                                    </Grid>
+                                </Box>
+                                <Box sx={{justifyContent: 'space-evenly', width: 400, margin: 5}}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={6}>
+                                            <FormControl fullWidth>
+                                                <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                                                    Currency
+                                                </InputLabel>
+                                                <NativeSelect
+                                                    value={formik.values.currency}
+                                                    name='currency'
+                                                    onChange={formik.handleChange}
+                                                >
+                                                    <option value="usd">USD</option>
+                                                    <option value="vnd">VND</option>
+                                                    <option value="eur">EUR</option>
+                                                </NativeSelect>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <TextField
+                                                label="Initial Balance"
+                                                name="initialBalance"
+                                                variant="filled"
+                                                onChange={formik.handleChange}
+                                                value={formik.values.initialBalance}
+                                                color="primary"
+                                                type="number"
+                                                focused
+                                                fullWidth
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            </DialogContent>
+                            <FormControlLabel style={{marginLeft: 20}} control={<Checkbox/>} label="Excluded from Total"/>
+                            <p style={{margin: 20, fontSize: 13}}>Ignore this wallet & its balance in the "Total" mode.</p>
+                            <form onSubmit={formik.handleSubmit}>
+                            <DialogActions>
+                                <Button variant="contained" onClick={handleClose} color="error">Cancel</Button>
+                                <Button variant="contained" type="submit" color="success">Add</Button>
+                            </DialogActions>
+                            </form>
+                        </Dialog>
+                    </div>
                 </Toolbar>
             </AppBar>
             <Container maxWidth="lg" sx={{
@@ -56,24 +176,25 @@ const PageWallet = () => {
                                 justifyContent: "center"
                             }}
                         >
-                                <List
-                                    sx={{ width: '100%' }}
-                                    component="nav"
-                                    aria-labelledby="nested-list-subheader"
-                                    subheader={
-                                        <ListSubheader component="div" id="nested-list-subheader" style={{backgroundColor:"#e8e8e8"}}>
-                                            Included in Total
-                                        </ListSubheader>
-                                    }
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <SendIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Saving" />
-                                        100000
-                                    </ListItemButton>
-                                </List>
+                            <List
+                                sx={{width: '100%'}}
+                                component="nav"
+                                aria-labelledby="nested-list-subheader"
+                                subheader={
+                                    <ListSubheader component="div" id="nested-list-subheader"
+                                                   style={{backgroundColor: "#e8e8e8"}}>
+                                        Included in Total
+                                    </ListSubheader>
+                                }
+                            >
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <SendIcon/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Saving"/>
+                                    100000
+                                </ListItemButton>
+                            </List>
                         </Paper>
                     </Grid>
                 </Grid>
