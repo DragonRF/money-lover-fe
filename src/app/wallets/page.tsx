@@ -25,10 +25,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import SendIcon from '@mui/icons-material/Send';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useFormik} from "formik";
 import * as Yup from 'yup';
 import {WalletService} from "@/app/service/wallet.service";
+import Link from "next/link";
+import Swal from 'sweetalert2';
 
 
 const WalletSchema = Yup.object().shape({
@@ -43,6 +45,14 @@ const WalletSchema = Yup.object().shape({
 
 const PageWallet = () => {
     const [open, setOpen] = useState(false);
+    const [wallets,setWallets] = useState([])
+
+    useEffect(() =>{
+        WalletService.getWalletsByUserId().then(res =>{
+            console.log(res.data.data)
+            setWallets(res.data.data)
+        })
+    },[open])
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -55,25 +65,28 @@ const PageWallet = () => {
     const formik = useFormik({
         initialValues: {
             name: '',
-            currency: 'usd',
+            currency: 'vnd',
             initialBalance: 0
         },
         validationSchema: WalletSchema,
-        onSubmit: values => {
-            WalletService.createWallet(values).then(res => {
-                console.log(res)
-                if (res.data.status === 'success'){
-                    handleClose()
+        onSubmit: async (values) => {
+            try {
+                const res = await WalletService.createWallet(values);
+                if (res.data.status === 'success') {
+                    handleClose();
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Wallet Created',
+                        text: 'Wallet created successfully!',
+                    });
                 }
-            })
-            console.log(values)
+            } catch (error) {
+                console.log(error);
+            }
         }
-
     });
-
     return (
         <Box sx={{flexGrow: 1, backgroundColor: '#d2d0d0', minHeight: 800}}>
-
             <AppBar position="static">
                 <Toolbar>
                     <IconButton
@@ -83,7 +96,9 @@ const PageWallet = () => {
                         aria-label="menu"
                         sx={{mr: 2}}
                     >
-                        <ArrowBackIcon/>
+                        <Link href="/dashboard" color="white">
+                            <ArrowBackIcon/>
+                        </Link>
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         My Wallet
@@ -126,9 +141,7 @@ const PageWallet = () => {
                                                     name='currency'
                                                     onChange={formik.handleChange}
                                                 >
-                                                    <option value="usd">USD</option>
                                                     <option value="vnd">VND</option>
-                                                    <option value="eur">EUR</option>
                                                 </NativeSelect>
                                             </FormControl>
                                         </Grid>
@@ -187,13 +200,21 @@ const PageWallet = () => {
                                     </ListSubheader>
                                 }
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <SendIcon/>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Saving"/>
-                                    100000
-                                </ListItemButton>
+                                {wallets.length > 0 && wallets.map((item) => (
+                                    <ListItemButton key={item.id}>
+                                        <ListItemIcon>
+                                            <SendIcon/>
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.name}/>
+                                        {new Intl.NumberFormat('vi-VN',{
+                                            style: 'currency',
+                                            currency: "VND"
+                                        }).format(item.initialBalance)
+                                        }
+                                    </ListItemButton>
+
+                                    )
+                                )}
                             </List>
                         </Paper>
                     </Grid>
