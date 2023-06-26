@@ -25,4 +25,17 @@ export class WalletService {
 
         )
     }
+
+    static async deleteWalletById(walletId){
+        let token = localStorage.getItem('token')
+        return await axios.delete(
+            `http://localhost:3000/wallets/${walletId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+
+        )
+    }
 }
