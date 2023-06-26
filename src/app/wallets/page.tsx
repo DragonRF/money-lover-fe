@@ -31,6 +31,7 @@ import * as Yup from 'yup';
 import {WalletService} from "@/app/service/wallet.service";
 import Link from "next/link";
 import Swal from 'sweetalert2';
+import WalletDialog from "@/app/dashboard/components/wallets/walletDetail";
 
 
 const WalletSchema = Yup.object().shape({
@@ -45,14 +46,16 @@ const WalletSchema = Yup.object().shape({
 
 const PageWallet = () => {
     const [open, setOpen] = useState(false);
-    const [wallets,setWallets] = useState([])
+    const [wallets, setWallets] = useState([])
+    const [selectedWallet, setSelectedWallet] = useState(null);
+    const [reload, setReload] = useState(false)
 
-    useEffect(() =>{
-        WalletService.getWalletsByUserId().then(res =>{
+    useEffect(() => {
+        WalletService.getWalletsByUserId().then(res => {
             console.log(res.data.data)
             setWallets(res.data.data)
         })
-    },[open])
+    }, [open,reload])
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -161,13 +164,15 @@ const PageWallet = () => {
                                     </Grid>
                                 </Box>
                             </DialogContent>
-                            <FormControlLabel style={{marginLeft: 20}} control={<Checkbox/>} label="Excluded from Total"/>
-                            <p style={{margin: 20, fontSize: 13}}>Ignore this wallet & its balance in the "Total" mode.</p>
+                            <FormControlLabel style={{marginLeft: 20}} control={<Checkbox/>}
+                                              label="Excluded from Total"/>
+                            <p style={{margin: 20, fontSize: 13}}>Ignore this wallet & its balance in the "Total"
+                                mode.</p>
                             <form onSubmit={formik.handleSubmit}>
-                            <DialogActions>
-                                <Button variant="contained" onClick={handleClose} color="error">Cancel</Button>
-                                <Button variant="contained" type="submit" color="success">Add</Button>
-                            </DialogActions>
+                                <DialogActions>
+                                    <Button variant="contained" onClick={handleClose} color="error">Cancel</Button>
+                                    <Button variant="contained" type="submit" color="success">Add</Button>
+                                </DialogActions>
                             </form>
                         </Dialog>
                     </div>
@@ -201,17 +206,17 @@ const PageWallet = () => {
                                 }
                             >
                                 {wallets.length > 0 && wallets.map((item) => (
-                                    <ListItemButton key={item.id}>
-                                        <ListItemIcon>
-                                            <SendIcon/>
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.name}/>
-                                        {new Intl.NumberFormat('vi-VN',{
-                                            style: 'currency',
-                                            currency: "VND"
-                                        }).format(item.initialBalance)
-                                        }
-                                    </ListItemButton>
+                                        <ListItemButton key={item.id} onClick={() => setSelectedWallet(item)}>
+                                            <ListItemIcon>
+                                                <SendIcon/>
+                                            </ListItemIcon>
+                                            <ListItemText primary={item.name}/>
+                                            {new Intl.NumberFormat('vi-VN', {
+                                                style: 'currency',
+                                                currency: "VND"
+                                            }).format(item.initialBalance)
+                                            }
+                                        </ListItemButton>
 
                                     )
                                 )}
@@ -220,7 +225,8 @@ const PageWallet = () => {
                     </Grid>
                 </Grid>
             </Container>
-
+            <WalletDialog selectedWallet={selectedWallet} open={() => setReload(!reload)}
+                          onClose={() => setSelectedWallet(null)}/>
         </Box>
     )
 }
