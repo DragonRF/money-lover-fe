@@ -1,10 +1,9 @@
-"use client"
-import * as React from 'react';
-import {styled, createTheme, ThemeProvider} from '@mui/material/styles';
+import React, { useState } from 'react';
+import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
-import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -20,14 +19,21 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import SearchIcon from '@mui/icons-material/Search';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import Chart from './Chart';
-import {MainItem} from "@/app/dashboard/components/MainItem";
-import {SecondaryItem} from "@/app/dashboard/components/SecondaryItem";
+import { MainItem } from '@/app/dashboard/components/MainItem';
+import { SecondaryItem } from '@/app/dashboard/components/SecondaryItem';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import {Button, CardActionArea, CardActions, ToggleButton, ToggleButtonGroup} from '@mui/material';
-import TabScrollTransaction from "@/app/dashboard/components/Tabs/TabScrollTransaction";
+import {
+    Button,
+    CardActionArea,
+    CardActions,
+    FormControl,
+    InputLabel,
+    Select,
+    ToggleButton,
+    ToggleButtonGroup,
+} from '@mui/material';
+import TabScrollTransaction from '@/app/dashboard/components/Tabs/TabScrollTransaction';
+import TransactionDialog from "@/app/dashboard/components/wallets/transactions/page";
 
 function Copyright(props: any) {
     return (
@@ -50,7 +56,7 @@ interface AppBarProps extends MuiAppBarProps {
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({theme, open}) => ({
+})<AppBarProps>(({ theme, open }) => ({
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
@@ -66,55 +72,52 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})(
-    ({theme, open}) => ({
-        '& .MuiDrawer-paper': {
-            position: 'relative',
-            whiteSpace: 'nowrap',
-            width: drawerWidth,
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
+    '& .MuiDrawer-paper': {
+        position: 'relative',
+        whiteSpace: 'nowrap',
+        width: drawerWidth,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        boxSizing: 'border-box',
+        ...(!open && {
+            overflowX: 'hidden',
             transition: theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.enteringScreen,
+                duration: theme.transitions.duration.leavingScreen,
             }),
-            boxSizing: 'border-box',
-            ...(!open && {
-                overflowX: 'hidden',
-                transition: theme.transitions.create('width', {
-                    easing: theme.transitions.easing.sharp,
-                    duration: theme.transitions.duration.leavingScreen,
-                }),
-                width: theme.spacing(7),
-                [theme.breakpoints.up('sm')]: {
-                    width: theme.spacing(9),
-                },
-            }),
-        },
-    }),
-);
+            width: theme.spacing(7),
+            [theme.breakpoints.up('sm')]: {
+                width: theme.spacing(9),
+            },
+        }),
+    },
+}));
 
 const mdTheme = createTheme();
 
 function DashboardContent() {
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
     };
 
-    const [alignment, setAlignment] = React.useState('thismonth');
+    const [openDialog, setOpenDialog] = useState(false);
 
-    const handleChange = (
-        event: React.MouseEvent<HTMLElement>,
-        newAlignment: string,
-    ) => {
-        setAlignment(newAlignment);
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
     };
 
     return (
-
-
         <ThemeProvider theme={mdTheme}>
-            <Box sx={{display: 'flex'}}>
-                <CssBaseline/>
+            <Box sx={{ display: 'flex' }}>
+                <CssBaseline />
                 <AppBar position="absolute" open={open}>
                     <Toolbar
                         sx={{
@@ -128,33 +131,27 @@ function DashboardContent() {
                             onClick={toggleDrawer}
                             sx={{
                                 marginRight: '36px',
-                                ...(open && {display: 'none'}),
+                                ...(open && { display: 'none' }),
                             }}
                         >
-                            <MenuIcon/>
+                            <MenuIcon />
                         </IconButton>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                            sx={{flexGrow: 1}}
-                        >
+                        <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
                             Dashboard
                         </Typography>
                         <div>
                             <IconButton color="inherit">
-                                <CalendarMonthIcon/>
+                                <CalendarMonthIcon />
                             </IconButton>
                             <IconButton color="inherit">
                                 <Badge badgeContent={4} color="secondary">
-                                    <VisibilityIcon/>
+                                    <VisibilityIcon />
                                 </Badge>
                             </IconButton>
                             <IconButton color="inherit">
-                                <SearchIcon/>
+                                <SearchIcon />
                             </IconButton>
-                            <Button variant="contained" color="success" style={{backgroundColor: "green"}}>
+                            <Button variant="contained" color="success" style={{ backgroundColor: 'green' }} onClick={handleOpenDialog}>
                                 Add Transaction
                             </Button>
                         </div>
@@ -170,59 +167,47 @@ function DashboardContent() {
                         }}
                     >
                         <IconButton onClick={toggleDrawer}>
-                            <ChevronLeftIcon/>
+                            <ChevronLeftIcon />
                         </IconButton>
                     </Toolbar>
-                    <Divider/>
+                    <Divider />
                     <List component="nav">
-                        <MainItem/>
-                        <Divider sx={{my: 1}}/>
-                        <SecondaryItem/>
+                        <MainItem />
+                        <Divider sx={{ my: 1 }} />
+                        <SecondaryItem />
                     </List>
                 </Drawer>
                 <Box
                     component="main"
                     sx={{
                         backgroundColor: (theme) =>
-                            theme.palette.mode === 'light'
-                                ? theme.palette.grey[100]
-                                : theme.palette.grey[900],
+                            theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
                         flexGrow: 1,
                         height: '100vh',
                         overflow: 'auto',
                     }}
                 >
-                    <Toolbar/>
-                    <Container maxWidth="lg" sx={{
-                        mt: 4,
-                        mb: 4,
-                        justifyContent: 'center',
-                    }}>
+                    <Toolbar />
+                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4, justifyContent: 'center' }}>
                         <Grid container spacing={3} justifyContent="center">
                             {/* Chart */}
                             <Grid item xs={12} md={6} lg={6}>
-                                <Paper
-                                    sx={{
-                                        p: 2,
-                                        flexDirection: 'column',
-                                        height: 500,
-                                        justifyContent: "center"
-                                    }}
-                                >
+                                <Paper sx={{ p: 2, flexDirection: 'column', height: 500, justifyContent: 'center' }}>
                                     <Card>
-                                        <TabScrollTransaction/>
+                                        <TabScrollTransaction />
                                     </Card>
                                 </Paper>
                             </Grid>
                         </Grid>
-                        <Copyright sx={{pt: 4}}/>
+                        <Copyright sx={{ pt: 4 }} />
                     </Container>
                 </Box>
+                <TransactionDialog open={openDialog} onClose={handleCloseDialog} />
             </Box>
         </ThemeProvider>
     );
 }
 
 export default function Dashboard() {
-    return <DashboardContent/>;
+    return <DashboardContent />;
 }

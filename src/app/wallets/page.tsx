@@ -1,3 +1,4 @@
+// wallet/page.tsx
 'use client'
 import Typography from "@mui/material/Typography";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -120,7 +121,7 @@ const PageWallet = () => {
                                                 name="name"
                                                 type='text'
                                                 label="Wallet name"
-                                                variant="filled"
+                                                variant="outlined"
                                                 color="primary"
                                                 placeholder="Your wallet name?"
                                                 focused
@@ -152,7 +153,7 @@ const PageWallet = () => {
                                             <TextField
                                                 label="Initial Balance"
                                                 name="initialBalance"
-                                                variant="filled"
+                                                variant="outlined"
                                                 onChange={formik.handleChange}
                                                 value={formik.values.initialBalance}
                                                 color="primary"
@@ -217,7 +218,6 @@ const PageWallet = () => {
                                             }).format(item.initialBalance)
                                             }
                                         </ListItemButton>
-
                                     )
                                 )}
                             </List>
